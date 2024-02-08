@@ -10,15 +10,14 @@ application_size_data = []
 response_time_data=[]
 time_data_size = []
 time_data_response = []
-# current user's swarm endpoint
-current_ip = "http://"+ sys.argv[1] + ":8000"
+
 
 UPPER_RESPONSE_THRESHOLD = 3
 LOWER_RESPONSE_THRESHOLD = 2
 SCALE_IN_FACTOR = 0.5
 SCALE_OUT_FACTOR = 2
 MONITOR_PERIOD = 20
-MAX_CONTAINERS = 75
+MAX_CONTAINERS = 128
 MIN_CONTAINERS = 4
 scaling_enabled = False
 
@@ -68,20 +67,11 @@ def update_size_plot():
     application_size_data.append(get_current_containers())
     time_data_size.append(datetime.now())
     plt.plot(time_data_size, application_size_data, 'b-')
-    plt.title('Application Size')
+    plt.title('Number of Containers over Time')
     plt.xlabel('Time')
     plt.ylabel('# of Containers')
     plt.savefig("application_size_plot.png")
 
-def update_response_plot(avg_rsp_time):
-    print("Updating response size plot")
-    response_time_data.append(avg_rsp_time)
-    time_data_response.append(datetime.now())
-    plt.plot(time_data_response,response_time_data,'b-')
-    plt.title('Average Response Time')
-    plt.xlabel('Time')
-    plt.ylabel('Average Response Time')
-    plt.savefig("response_time_plot.png")
 
 # autoscale func
 def autoscale():
@@ -132,6 +122,9 @@ def autoscale():
 
 
 if __name__ == "__main__":
+    global current_ip
+    userIp = input("Enter swarm manager IP: ")
+    current_ip = "http://"+ userIp + ":8000"
     userInput = input("Run with autoscaling? [y/n]  > ")
 
     service = client.services.get("app_name_web")
@@ -144,4 +137,5 @@ if __name__ == "__main__":
         scaling_enabled = False
         print("SCALING HAS BEEN DISABLED")
 
+    print("Connecting to IP: ", current_ip)
     autoscale()

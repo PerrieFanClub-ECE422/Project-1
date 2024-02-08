@@ -10,19 +10,19 @@ class ClientUserTasks(TaskSet):
 class User(HttpUser):
     wait_time = constant(1)
     tasks = {ClientUserTasks}
-    host= "http://10.2.8.10:8000/"
+
 
 class MyCustomShape(LoadTestShape):
     stages = [ 
-        {"duration": 45, "users": 0, "spawn_rate": 10},
-        {"duration": 90, "users": 5, "spawn_rate": 10},
-        {"duration": 135, "users": 20, "spawn_rate": 10},
-        {"duration": 180, "users": 40, "spawn_rate": 10},
-        {"duration": 225, "users": 60, "spawn_rate": 10},
-        {"duration": 270, "users": 40, "spawn_rate": 10},
-        {"duration": 315, "users": 20, "spawn_rate": 10},
-        {"duration": 360, "users": 5, "spawn_rate": 10},
-        {"duration": 405, "users": 0, "spawn_rate": 10},
+        {"duration": 15, "users": 0, "spawn_rate": 10},
+        {"duration": 60, "users": 5, "spawn_rate": 10},
+        {"duration": 105, "users": 20, "spawn_rate": 10},
+        {"duration": 150, "users": 40, "spawn_rate": 10},
+        {"duration": 195, "users": 60, "spawn_rate": 10},
+        {"duration": 240, "users": 40, "spawn_rate": 10},
+        {"duration": 285, "users": 20, "spawn_rate": 10},
+        {"duration": 330, "users": 5, "spawn_rate": 10},
+        {"duration": 310, "users": 0, "spawn_rate": 10},
     ]
 
     def tick(self):
