@@ -1,6 +1,7 @@
 import docker
 import requests
 import time
+import sys
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -10,7 +11,7 @@ response_time_data=[]
 time_data_size = []
 time_data_response = []
 # current user's swarm endpoint
-current_ip = "http://10.2.8.10:8000"
+current_ip = "http://"+ sys.argv[1] + ":8000"
 
 UPPER_RESPONSE_THRESHOLD = 3
 LOWER_RESPONSE_THRESHOLD = 2
