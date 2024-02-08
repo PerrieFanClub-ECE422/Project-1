@@ -13,11 +13,12 @@ time_data_response = []
 current_ip = "http://10.2.8.10:8000"
 
 UPPER_RESPONSE_THRESHOLD = 3
-LOWER_RESPONSE_THRESHOLD = 1.5
-SCALE_IN_FACTOR = 0.75
-SCALE_OUT_FACTOR = 1.25
+LOWER_RESPONSE_THRESHOLD = 2
+SCALE_IN_FACTOR = 0.5
+SCALE_OUT_FACTOR = 2
 MONITOR_PERIOD = 20
-MAX_REPLICAS = 50
+MAX_CONTAINERS = 75
+MIN_CONTAINERS = 4
 scaling_enabled = False
 
 # docker client
@@ -95,8 +96,8 @@ def autoscale():
 
             if metric_time:
                 update_size_plot()
-                print("\tsample #", num_samples)
                 num_samples += 1
+                print("\tsample #", num_samples)
                 total_response_time += metric_time
                 print("\tmetric = ", metric_time, "\ttotal = ", total_response_time)
             else:
@@ -116,11 +117,11 @@ def autoscale():
             #update_response_plot(average_response_time)
             if average_response_time > UPPER_RESPONSE_THRESHOLD and scaling_enabled:
                 print("getcurrcon ", get_current_containers(), "    calcscaleout ", SCALE_OUT_FACTOR)
-                scale_service( min(MAX_REPLICAS, int( get_current_containers() * SCALE_OUT_FACTOR) ) )
+                scale_service( min(MAX_CONTAINERS, int( get_current_containers() * SCALE_OUT_FACTOR) ) )
             
             elif average_response_time < LOWER_RESPONSE_THRESHOLD and scaling_enabled:
                 print("getcurrcon ", get_current_containers(), "    calcscalein ", SCALE_IN_FACTOR)
-                scale_service( int( get_current_containers() * SCALE_IN_FACTOR ) )
+                scale_service( max(MIN_CONTAINERS, int( get_current_containers() * SCALE_IN_FACTOR )) )
 
         print("!!!!!!! sleeping")
         time.sleep(1)
@@ -131,6 +132,9 @@ def autoscale():
 
 if __name__ == "__main__":
     userInput = input("Run with autoscaling? [y/n]  > ")
+
+    service = client.services.get("app_name_web")
+    service.scale(MIN_CONTAINERS)
 
     if userInput.lower() == "y":
         print("SCALING HAS BEEN ENABLED")
