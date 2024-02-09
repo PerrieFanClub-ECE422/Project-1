@@ -18,6 +18,7 @@ MONITOR_PERIOD = 20
 MAX_CONTAINERS = 128
 MIN_CONTAINERS = 1
 scaling_enabled = False
+CURRENT_CONTAINERS = 1
 
 # docker client
 try:
@@ -64,10 +65,13 @@ def wait_until_container_count(target_count):
 
 def scale_service(scale_amount):
     try:
+        #if current containers isnt at the number its suppose to be we wait until it is 
+        #so we dont overload the scale service
+        wait_until_container_count(CURRENT_CONTAINERS)
         service = client.services.get("app_name_web")
         service.scale(scale_amount)
         print("*** Service Scale Amount = ", scale_amount, " ***")
-        wait_until_container_count(scale_amount)
+        CURRENT_CONTAINERS = scale_amount
     except Exception as err:
         print("Error Scaling: ", err)
 
@@ -131,8 +135,6 @@ if __name__ == "__main__":
 
     service = client.services.get("app_name_web")
     service.scale(MIN_CONTAINERS)
-    # if there is existing containers, reset to 1
-    wait_until_container_count(MIN_CONTAINERS)
 
     if userInput.lower() == "y":
         print("SCALING HAS BEEN ENABLED")
