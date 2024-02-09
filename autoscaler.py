@@ -127,12 +127,10 @@ if __name__ == "__main__":
     global current_ip
     userIp = input("Enter swarm manager IP: ")
     current_ip = "http://"+ userIp + ":8000"
+    initContainers = int(input("Enter the amount of Docker Containers you want to start with: "))
     userInput = input("Run with autoscaling? [y/n]  > ")
-
-    service = client.services.get("app_name_web")
-    service.scale(MIN_CONTAINERS)
-    # if there is existing containers, reset to 1
-    wait_until_container_count(MIN_CONTAINERS)
+    
+    scale_service(initContainers)
 
     if userInput.lower() == "y":
         print("SCALING HAS BEEN ENABLED")
