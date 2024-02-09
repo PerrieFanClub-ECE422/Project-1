@@ -1,6 +1,7 @@
 Autoscaling Algorithm Pseudo-code:
 
-While true:
+-------------------------------------------------
+While True:
 
     While an interval of 20 seconds are elapsing :
         Total response time = 0
@@ -13,26 +14,26 @@ While true:
         Calculate average response time by dividing total response time by number of samples
 
         If average response time > 3 seconds:
-            Scale service out by 1.5x
+            Scale service out by 2x
+            Wait until containers reach expected value
 
-        If average response time < 1.5 seconds:
+        If average response time < 2 seconds:
             Scale service in by 0.5x
+            Wait until containers reach expected value
 
+-------------------------------------------------
 
 Reasonings behind parameter settings:
 - A 20 second monitor interval was chosen because it can take some time for the containers to become stable
 and we wanted to reduce oscillation to the greatest degree. We want to ensure that we are getting
 sufficient average response time data before deciding if we need to perform any scaling on our application.
 
-- An upper response time threshold of 3 seconds and a lower threshold of 1.5 seconds was chosen mostly through
+- An upper response time threshold of 3 seconds and a lower threshold of 2 seconds was chosen mostly through
 trial and error and observing the average response time of a server under medium load. When the average response
 time is greater than 3 seconds then that's usually a sign that we might need more containers, whereas if the response 
-time is less than 1.5 seconds then that is a sign that resources may be wasted and we should scale in.
+time is less than 2 seconds then that is a sign that resources may be wasted and we should scale in.
 
-- The scaling factors of 1.25x and 0.75x were also chosen through trial and error. We chose these scaling factors
-because we decided that it is better to be more precise with our scaling rather than being too broad and potentially
-overshooting an ideal number of containers. If our scaling factors were too broad then we could also run into a 
-situation where the autoscaler is constantly scaling in and out because it is unable to arrive at a number of containers
-which results in an acceptable response time. 
+- The scaling factors of 2x and 0.5x were also chosen through trial and error. We chose these scaling factors
+because we wanted to keep it simple and we found that we obtained good visualization results with these scaling factors.
 
 
